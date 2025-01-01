@@ -1,0 +1,61 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # 仅当推送符合语义化版本号的标签时触发，如 v1.0.0
+
+jobs:
+  # changelog displayed
+  changelog:
+    name: Create release changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        run: npx changelogithub # or changelogithub@0.12 if ensure the stable result
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
+  release:
+    needs: changelog
+    env:
+      CI: false # ignore warning
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest ]
+    name: Release
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18" # lts-node-js
+          registry-url: "https://registry.npmjs.org"
+
+      # use yarn
+      - name: Install Yarn
+        run: npm install --global yarn
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: mxhentai-front
+          persist-credentials: false
+          fetch-depth: 0
+          submodules: recursive
+      - name: Build
+        run: |
+          mv mxhentai-front/release.sh .
+          bash release.sh
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+            files: compress/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
