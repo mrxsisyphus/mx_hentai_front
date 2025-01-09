@@ -36,9 +36,9 @@ jobs:
           node-version: "18" # lts-node-js
           registry-url: "https://registry.npmjs.org"
 
-      # use yarn
-      - name: Install Yarn
-        run: npm install --global yarn
+      # use pnpm
+      - name: Install pnpm
+        run: npm install --global pnpm@latest-10
 
       - name: Checkout
         uses: actions/checkout@v4

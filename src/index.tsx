@@ -8,9 +8,5 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
-  <ConfirmProvider>
-    <SnackbarProvider autoHideDuration={3000} maxSnack={3}>
-      <App />
-    </SnackbarProvider>
-  </ConfirmProvider>,
+  <App />
 );

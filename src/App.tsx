@@ -15,6 +15,8 @@ import MankaDetailPage from './pages/detail/MankaDetailPage';
 import FavoriteList from './pages/list/FavoriteList';
 import MankaListPage from './pages/list/MankaListPage';
 import Login from './pages/login/Login';
+import { ConfirmProvider } from 'material-ui-confirm';
+import { SnackbarProvider } from 'notistack';
 
 const darkTheme = createTheme({
   palette: {
@@ -39,6 +41,8 @@ function App() {
     // </ThemeProvider>
     <React.Fragment>
       <ThemeProvider theme={lightTheme}>
+      <ConfirmProvider>
+      <SnackbarProvider autoHideDuration={3000} maxSnack={3}>
         <BrowserRouter>
           <Breadcrumbs aria-label="breadcrumb">
             <Link underline="hover" color="inherit" href="/">
@@ -110,47 +114,8 @@ function App() {
             <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>
         </BrowserRouter>
-        {/*<BrowserRouter>*/}
-        {/*    <Box sx={{ display: "flex" }}>*/}
-        {/*        <Drawer*/}
-        {/*            variant="persistent"*/}
-        {/*            open={open}*/}
-        {/*            sx={{*/}
-        {/*                width: 150,*/}
-        {/*                flexShrink: 0,*/}
-        {/*                "& .MuiDrawer-paper": {*/}
-        {/*                    width: 150,*/}
-        {/*                    boxSizing: "border-box",*/}
-        {/*                },*/}
-        {/*            }}*/}
-        {/*        >*/}
-        {/*        <List>*/}
-        {/*            <ListItem button component={RouterLink as any} to="/">*/}
-        {/*                <ListItemText primary="Home"/>*/}
-        {/*            </ListItem>*/}
-        {/*            <ListItem button component={RouterLink as any} to="/admin">*/}
-        {/*                <ListItemText primary="Admin"/>*/}
-        {/*            </ListItem>*/}
-        {/*        </List>*/}
-        {/*    </Drawer>*/}
-        {/*    <Box component="main" sx={{ flexGrow: 1, p: 1}}>*/}
-        {/*            <Routes>*/}
-        {/*                <Route path="/" element={<AuthWrapComponent>*/}
-        {/*                    <MankaListPage/>*/}
-        {/*                </AuthWrapComponent>}/>*/}
-        {/*                <Route path="/manka/:mankaId" element={<AuthWrapComponent>*/}
-        {/*                    <MankaDetailPage/>*/}
-        {/*                </AuthWrapComponent>}/>*/}
-        {/*                <Route path="/login" element={<Login/>}/>*/}
-        {/*                <Route path="/config" element={<AuthWrapComponent>*/}
-        {/*                    <Config />*/}
-        {/*                </AuthWrapComponent>} />*/}
-        {/*                <Route path="*" element={<Navigate replace to="/"/>}/>*/}
-        {/*            </Routes>*/}
-
-        {/*    </Box>*/}
-        {/*</Box>*/}
-        {/*</BrowserRouter>*/}
+        </SnackbarProvider>
+        </ConfirmProvider>
       </ThemeProvider>
     </React.Fragment>
   );

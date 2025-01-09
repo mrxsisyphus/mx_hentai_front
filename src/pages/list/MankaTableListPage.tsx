@@ -66,7 +66,7 @@ const getMankaTableRow = (mankaData: MankaArchive): MankaTableRow => {
 export default function MankaTableListPage(options: MankaTableListPageProps) {
   const { mankaData, clickTagCallback, addToFavorite, deleteFavorite } =
     options;
-  console.log(mankaData)
+  // console.log(mankaData)
   const [mankaTableRows, setMankaTableRows] = useState<MankaTableRow[]>([]);
 
   // 当前的manka
@@ -328,8 +328,8 @@ export default function MankaTableListPage(options: MankaTableListPageProps) {
           manka={currentManka}
         />
       )}
-      <Paper sx={{ width: '100%' }}>
-        <TableContainer sx={{ maxHeight: '75vh' }}>
+      <Paper >
+        <TableContainer >
           <Table stickyHeader aria-label="sticky table" size="small">
             <TableHead>
               <TableRow>

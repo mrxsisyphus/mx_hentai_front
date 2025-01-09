@@ -1,8 +1,8 @@
 cd mxhentai-front
 # Install dependencies
-yarn install
+pnpm install
 # Build
-yarn build
+pnpm build
 # cp build result to outside
 cp -r build ../
 cd ..
