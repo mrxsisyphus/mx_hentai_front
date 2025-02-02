@@ -38,6 +38,7 @@ import type {
 import type { Response } from '../../types/response';
 import MankaImgItem from './MankaImgItem';
 import MankaTableListPage from './MankaTableListPage';
+import MankaImgListPage from './MankaImgListPage';
 import { DisplayMode, RankField, RankMode } from './types';
 
 // 定义状态和动作类型
@@ -413,6 +414,10 @@ const MankaListPage: React.FC = () => {
     appendSearchText(`${tag.tagName}:${tag.tagValue}`);
   };
 
+  const onMankaClick = (manka: MankaArchive) => {
+    navigate(`/manka/${manka.archiveId}`);
+  };
+
   // 搜索组组件
   const SearchGroupStack: React.FC = () => {
     return (
@@ -481,7 +486,7 @@ const MankaListPage: React.FC = () => {
   const deleteFavorite = useCallback(
     async (favoriteId: string) => {
       confirm({
-        description: "确定要移除收藏吗？",
+        description: '确定要移除收藏吗？',
       })
         .then(async () => {
           try {
@@ -590,9 +595,9 @@ const MankaListPage: React.FC = () => {
               系统更新时间
             </MenuItem>
             <MenuItem value={RankField.ArchiveModTime}>档案修改时间</MenuItem>
-            <MenuItem value={RankField.ArchiveLastReadAt}>
+            {/* <MenuItem value={RankField.ArchiveLastReadAt}>
               最后阅读时间
-            </MenuItem>
+            </MenuItem> */}
           </Select>
           <IconButton
             title={'sortMethod'}
@@ -656,22 +661,18 @@ const MankaListPage: React.FC = () => {
       {state.loading && state.page === 1 ? ( // 仅在初始加载时显示 CircularProgress
         <CircularProgress />
       ) : state.displayMode === DisplayMode.ImageList ? (
-        <ImageList cols={5} gap={10}>
-          {state.pageData.map((manka) => (
-            <MankaImgItem
-              manka={manka}
-              clickTagCallback={clickTagCallback}
-              onCoverClick={(manka) => navigate(`/manka/${manka.archiveId}`)}
-              addToFavorite={addToFavorite}
-              deleteFavorite={deleteFavorite}
-              key={manka.archiveId}
-            />
-          ))}
-        </ImageList>
+        <MankaImgListPage
+          mankaData={state.pageData}
+          onTagClick={clickTagCallback}
+          onMankaClick={onMankaClick}
+          addToFavorite={addToFavorite}
+          deleteFavorite={deleteFavorite}
+        />
       ) : (
         <MankaTableListPage
           mankaData={state.pageData}
-          clickTagCallback={clickTagCallback}
+          onTagClick={clickTagCallback}
+          onMankaClick={onMankaClick}
           addToFavorite={addToFavorite}
           deleteFavorite={deleteFavorite}
         />
@@ -696,9 +697,9 @@ const MankaListPage: React.FC = () => {
               系统更新时间
             </MenuItem>
             <MenuItem value={RankField.ArchiveModTime}>档案修改时间</MenuItem>
-            <MenuItem value={RankField.ArchiveLastReadAt}>
+            {/* <MenuItem value={RankField.ArchiveLastReadAt}>
               最后阅读时间
-            </MenuItem>
+            </MenuItem> */}
           </Select>
           <IconButton
             title={'sortMethod'}

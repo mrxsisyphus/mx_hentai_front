@@ -1,8 +1,7 @@
-import { ThumbDown } from '@mui/icons-material';
-
 export enum DetailImgMode {
   InfinityMode = 'infinityMode',
   PageMode = 'pageMode',
+  PhotoMode = 'photoMode',
 }
 
 export enum ImgRankMode {

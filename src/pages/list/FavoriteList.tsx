@@ -97,9 +97,12 @@ export default function FavoriteList() {
                     // <FavoriteView favorite={favorite} key={favorite.favoriteId} />
                     favorite?.archive && (
                       <MankaImgItem
-                        manka={{ ...favorite.archive, belongFavoriteId: favorite.favoriteId }}
-                        clickTagCallback={clickTagCallback}
-                        onCoverClick={onCoverClick}
+                        manka={{
+                          ...favorite.archive,
+                          belongFavoriteId: favorite.favoriteId,
+                        }}
+                        onTagClick={clickTagCallback}
+                        onMankaClick={onCoverClick}
                         deleteFavorite={deleteFavorite}
                         key={favorite.archive?.archiveId}
                       />

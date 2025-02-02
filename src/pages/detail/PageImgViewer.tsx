@@ -10,7 +10,7 @@ interface PageImgViewerProps {
   totalPage: number;
   sortedImgItems: ArchiveItem[];
   currentPage: number;
-  onPageChange: (newPage: number) => void;
+  onPageChange: (newPage: number) => void; // when change page callback to pagejumper
 }
 
 const PageImgViewer: React.FC<PageImgViewerProps> = React.memo(
@@ -28,12 +28,18 @@ const PageImgViewer: React.FC<PageImgViewerProps> = React.memo(
       (event: React.ChangeEvent<unknown>, value: number) => {
         onPageChange(value);
       },
-      [],
+      [onPageChange],
     );
 
     return (
-      <Box>
-        <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        aria-label="page-img-viewer"
+      >
+        <Box aria-label="page-img-viewer-pagination">
           <Pagination
             count={totalPage}
             page={currentPage}
@@ -42,7 +48,7 @@ const PageImgViewer: React.FC<PageImgViewerProps> = React.memo(
             showLastButton
           />
         </Box>
-        <Box mt={2}>
+        <Box aria-label="page-img-viewer-content" flex={1}>
           {sortedImgItems[currentPage - 1] && (
             <ArchiveItemForPage
               archiveItem={sortedImgItems[currentPage - 1]}
@@ -50,10 +56,11 @@ const PageImgViewer: React.FC<PageImgViewerProps> = React.memo(
               mankaId={mankaId}
               imgSpec={imgSpec}
               totalPage={totalPage}
+              onClick={() => onPageChange(currentPage + 1)}
             />
           )}
         </Box>
-        <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+        <Box aria-label="page-img-viewer-pagination">
           <Pagination
             count={totalPage}
             page={currentPage}

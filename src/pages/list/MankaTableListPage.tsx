@@ -25,13 +25,9 @@ import { formatLocalTime } from '../../utils/datetime';
 export interface MankaTableListPageProps {
   mankaData: MankaArchive[];
 
-  //onMankaClick?:(event:React.MouseEvent<HTMLTableRowElement, MouseEvent>,manka:MankaArchive) => void
+  onTagClick?: (tag: MankaArchiveTag) => void;
 
-  //onTitleMouseEnter?: (event:React.MouseEvent<HTMLElement>,manka:MankaArchive) => void
-
-  //onTitleMouseLeave?:(event:React.MouseEvent<HTMLElement>,manka:MankaArchive) => void
-
-  clickTagCallback?: (tag: MankaArchiveTag) => void;
+  onMankaClick?: (manka: MankaArchive) => void;
 
   addToFavorite?: (archive: MankaArchive) => void;
 
@@ -64,7 +60,7 @@ const getMankaTableRow = (mankaData: MankaArchive): MankaTableRow => {
 };
 
 export default function MankaTableListPage(options: MankaTableListPageProps) {
-  const { mankaData, clickTagCallback, addToFavorite, deleteFavorite } =
+  const { mankaData, onTagClick, onMankaClick, addToFavorite, deleteFavorite } =
     options;
   // console.log(mankaData)
   const [mankaTableRows, setMankaTableRows] = useState<MankaTableRow[]>([]);
@@ -115,16 +111,7 @@ export default function MankaTableListPage(options: MankaTableListPageProps) {
     }
   };
 
-  const onMankaClick = (manka: MankaArchive) => {
-    // setCurrentManka(manka)
-    console.log(`你点击了漫画：${manka.archiveName}`);
-    //打开漫画
-    setTimeout(() => {
-      window.location.href = `/manka/${manka.archiveId}`;
-    }, 100);
-  };
-
-  const TagStack: React.FC<{ tags: MankaArchiveTag[]}> = ({ tags = [] }) => {
+  const TagStack: React.FC<{ tags: MankaArchiveTag[] }> = ({ tags = [] }) => {
     return (
       <>
         {/*<Stack direction="row" spacing={0.5}>*/}
@@ -138,7 +125,7 @@ export default function MankaTableListPage(options: MankaTableListPageProps) {
             key={`${tag.tagName}_${tag.tagValue}`}
             label={tag.tagValue}
             size={'small'}
-            onClick={() => (clickTagCallback ? clickTagCallback(tag) : null)}
+            onClick={() => (onTagClick ? onTagClick(tag) : null)}
           />
         ))}
       </>
@@ -195,7 +182,7 @@ export default function MankaTableListPage(options: MankaTableListPageProps) {
             <Typography
               onMouseEnter={(e) => onTitleMouseEnter(e, row.manka)}
               onMouseLeave={(e) => onTitleMouseLeave(e, row.manka)}
-              onClick={(_) => onMankaClick(row.manka)}
+              onClick={(_) => (onMankaClick ? onMankaClick(row.manka) : null)}
             >
               {archiveName}
             </Typography>
@@ -316,7 +303,7 @@ export default function MankaTableListPage(options: MankaTableListPageProps) {
         <MankaTagsPanelPopover
           anchorEl={tagsPanelPopoverAnchor}
           onClose={() => setTagsPanelPopoverAnchor(null)}
-          clickTagCallback={clickTagCallback}
+          clickTagCallback={onTagClick}
           manka={currentManka}
         />
       )}
@@ -328,8 +315,8 @@ export default function MankaTableListPage(options: MankaTableListPageProps) {
           manka={currentManka}
         />
       )}
-      <Paper >
-        <TableContainer >
+      <Paper>
+        <TableContainer>
           <Table stickyHeader aria-label="sticky table" size="small">
             <TableHead>
               <TableRow>
@@ -356,7 +343,7 @@ export default function MankaTableListPage(options: MankaTableListPageProps) {
                   >
                     {columns.map((column) => {
                       // @ts-ignore
-                      const value = _.get(row,column.id)
+                      const value = _.get(row, column.id);
                       return (
                         <TableCell
                           key={column.id}
