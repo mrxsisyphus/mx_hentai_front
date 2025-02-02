@@ -26,7 +26,6 @@ export interface MankaImageProps {
 export default function MankaImgItem(props: MankaImageProps) {
   const { manka, onTagClick, onMankaClick, addToFavorite, deleteFavorite } =
     props;
-
   // tagsPanelPopoverAnchor
   const [tagsPanelPopoverAnchor, setTagsPanelPopoverAnchor] =
     useState<HTMLElement | null>(null);
@@ -123,9 +122,30 @@ export default function MankaImgItem(props: MankaImageProps) {
         <ImageListItemBar
           title={
             <Box>
-              <Box>{/* 阅读进度条 */}</Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '4px',
+                  backgroundColor: '#f0f0f0',
+                  borderRadius: '2px',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  mb: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: `${(manka.lastReadPage / (manka.archiveTotalPage || 1)) * 100}%`,
+                    height: '100%',
+                    backgroundColor: '#4caf50',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                  }}
+                />
+              </Box>
               {manka.tags && (
-                <Typography fontSize={'small'} onMouseEnter={onTagsMouseEnter}>
+                <Typography fontSize="small" onMouseEnter={onTagsMouseEnter}>
                   <MankaTagsPanelPopover
                     anchorEl={tagsPanelPopoverAnchor}
                     onClose={() => setTagsPanelPopoverAnchor(null)}

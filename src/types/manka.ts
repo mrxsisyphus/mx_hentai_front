@@ -34,7 +34,7 @@ export interface MankaArchive {
   archiveItems?: ArchiveItem[];
 
   belongFavoriteId?: string;
-  lastReadAt?: string;
+  lastReadAt: number;
   lastReadPage: number;
 }
 

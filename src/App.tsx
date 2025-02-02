@@ -203,7 +203,7 @@ function Layout() {
             }}
           >
             <IconButton onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <ChevronLeft /> : <ChevronRight />}
+              <Menu />
             </IconButton>
             <IconButton
               onClick={() =>
