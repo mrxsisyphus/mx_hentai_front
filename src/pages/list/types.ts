@@ -2,6 +2,7 @@
 export enum DisplayMode {
   ImageList = 'imageList',
   TableList = 'tableList',
+  InfiniteScroll = 'infiniteScroll',
 }
 
 export enum RankMode {

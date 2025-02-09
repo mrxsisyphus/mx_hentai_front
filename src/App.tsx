@@ -47,6 +47,7 @@ import {
 import { styled, useTheme } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
+import InfiniteFavoriteList from './pages/list/InfiniteFavoriteList';
 
 const AppContext = React.createContext({
   setThemeMode: (mode: 'light' | 'dark') => {},
@@ -168,6 +169,7 @@ function Layout() {
             {[
               { text: 'Home', path: '/' },
               { text: 'Favorite', path: '/favorite' },
+              // { text: 'Infinite Favorite', path: '/infiniteFavorite' },
               { text: 'Tasks', path: '/tasks' },
               { text: 'Task Logs', path: '/taskLogs' },
               { text: 'Config', path: '/config' },
@@ -268,6 +270,10 @@ function App() {
                 >
                   <Route index element={<MankaListPage />} />
                   <Route path="favorite" element={<FavoriteList />} />
+                  {/* <Route
+                    path="infiniteFavorite"
+                    element={<InfiniteFavoriteList />}
+                  /> */}
                   <Route path="tasks" element={<TaskPage />} />
                   <Route path="taskLogs" element={<TaskLogPage />} />
                   <Route path="manka/:mankaId" element={<MankaDetailPage />} />

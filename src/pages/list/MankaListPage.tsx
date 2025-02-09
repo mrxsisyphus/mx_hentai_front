@@ -39,6 +39,7 @@ import type { Response } from '../../types/response';
 import MankaImgItem from './MankaImgItem';
 import MankaTableListPage from './MankaTableListPage';
 import MankaImgListPage from './MankaImgListPage';
+import MankaInfiniteScrollPage from './MankaInfiniteScrollPage';
 import { DisplayMode, RankField, RankMode } from './types';
 
 // 定义状态和动作类型
@@ -217,12 +218,15 @@ const MankaListPage: React.FC = () => {
         } = await API.post<Response<PageMankaArchive>>('/manka/search', query);
 
         dispatch({ type: 'SET_PAGE_TOTAL', payload: data.pageTotal });
-        dispatch({
-          type: 'SET_PAGE_DATA',
-          payload: append
-            ? [...state.pageData, ...data.pageData]
-            : data.pageData,
-        });
+        // 如果是无限滚动模式且是追加数据，则合并数据
+        if (append && state.displayMode === DisplayMode.InfiniteScroll) {
+          dispatch({
+            type: 'SET_PAGE_DATA',
+            payload: [...state.pageData, ...data.pageData],
+          });
+        } else {
+          dispatch({ type: 'SET_PAGE_DATA', payload: data.pageData });
+        }
         dispatch({
           type: 'SET_SEARCH_RESULT_TEXT',
           payload: queryText
@@ -244,14 +248,17 @@ const MankaListPage: React.FC = () => {
       state.rankField,
       state.rankMode,
       state.pageData,
+      state.displayMode,
       enqueueSnackbar,
     ],
   );
 
   // 监听相关状态变化进行搜索
   useEffect(() => {
-    handleSearch();
-    updateUrl(state); // 确保每次状态变化时更新 URL
+    if (state.displayMode !== DisplayMode.InfiniteScroll) {
+      handleSearch();
+      updateUrl(state);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     state.appliedSearchText,
@@ -515,11 +522,16 @@ const MankaListPage: React.FC = () => {
 
   // 改变页面
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    event: React.ChangeEvent<unknown> | number,
     newPage: number,
   ) => {
-    dispatch({ type: 'SET_PAGE', payload: newPage });
-    updateUrl({ page: newPage });
+    if (state.displayMode === DisplayMode.InfiniteScroll) {
+      dispatch({ type: 'SET_PAGE', payload: newPage });
+      handleSearch(true); // 无限滚动模式下追加数据
+    } else {
+      dispatch({ type: 'SET_PAGE', payload: newPage });
+      updateUrl({ page: newPage });
+    }
   };
 
   return (
@@ -646,16 +658,20 @@ const MankaListPage: React.FC = () => {
             <MenuItem value={250}>250</MenuItem>
             <MenuItem value={500}>500</MenuItem>
           </Select>
-          <IconButton
+          <Select
+            value={state.displayMode}
+            onChange={(e) => {
+              const newMode = e.target.value as DisplayMode;
+              dispatch({ type: 'SET_DISPLAY_MODE', payload: newMode });
+              updateUrl({ displayMode: newMode });
+            }}
             disabled={state.loading}
-            onClick={handleDisplayModeChange}
+            size="small"
           >
-            {state.displayMode === DisplayMode.TableList ? (
-              <GridViewIcon />
-            ) : (
-              <ListIcon />
-            )}
-          </IconButton>
+            <MenuItem value={DisplayMode.TableList}>表格视图</MenuItem>
+            <MenuItem value={DisplayMode.ImageList}>图片视图</MenuItem>
+            {/* <MenuItem value={DisplayMode.InfiniteScroll}>无极滚动</MenuItem> */}
+          </Select>
         </Box>
       </Box>
       {state.loading && state.page === 1 ? ( // 仅在初始加载时显示 CircularProgress
@@ -668,6 +684,17 @@ const MankaListPage: React.FC = () => {
           addToFavorite={addToFavorite}
           deleteFavorite={deleteFavorite}
         />
+      ) : state.displayMode === DisplayMode.InfiniteScroll ? (
+        <MankaInfiniteScrollPage
+          mankaData={state.pageData}
+          onTagClick={clickTagCallback}
+          onMankaClick={onMankaClick}
+          addToFavorite={addToFavorite}
+          deleteFavorite={deleteFavorite}
+          onPageChange={handlePageChange}
+          currentPage={state.page}
+          isLoading={state.loading}
+        />
       ) : (
         <MankaTableListPage
           mankaData={state.pageData}
@@ -677,89 +704,6 @@ const MankaListPage: React.FC = () => {
           deleteFavorite={deleteFavorite}
         />
       )}
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Box>
-          <Select
-            labelId="sort-select"
-            id="sort-select"
-            value={state.rankField}
-            onChange={handleRankFieldChange}
-            input={<Input />}
-            disabled={state.loading}
-          >
-            <MenuItem value={RankField.ArchiveName}>名称</MenuItem>
-            <MenuItem value={RankField.ArchiveSize}>大小</MenuItem>
-            <MenuItem value={RankField.ArchiveTotalPage}>页数</MenuItem>
-            <MenuItem value={RankField.ArchiveCreatedTime}>
-              系统录入时间
-            </MenuItem>
-            <MenuItem value={RankField.ArchiveUpdatedTime}>
-              系统更新时间
-            </MenuItem>
-            <MenuItem value={RankField.ArchiveModTime}>档案修改时间</MenuItem>
-            {/* <MenuItem value={RankField.ArchiveLastReadAt}>
-              最后阅读时间
-            </MenuItem> */}
-          </Select>
-          <IconButton
-            title={'sortMethod'}
-            onClick={handleRankModeChange}
-            color={'inherit'}
-            disabled={state.loading}
-          >
-            {state.rankMode === RankMode.DESC ? (
-              <TextRotationDownIcon />
-            ) : (
-              <TextRotateUpIcon />
-            )}
-          </IconButton>
-        </Box>
-        <Box>
-          <Pagination
-            disabled={state.loading}
-            count={Math.ceil(state.pageTotal / state.pageSize)}
-            page={state.page}
-            onChange={handlePageChange}
-            variant="outlined"
-            shape="rounded"
-            size="small"
-            siblingCount={1}
-            boundaryCount={1}
-            showFirstButton
-            showLastButton
-          />
-        </Box>
-        <Box>
-          <Select
-            labelId="pageSize-select"
-            id="pageSize-select"
-            value={state.pageSize}
-            onChange={handlePageSizeChange}
-            input={<Input />}
-            disabled={state.loading}
-            size="small"
-          >
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={25}>25</MenuItem>
-            <MenuItem value={35}>35</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
-            <MenuItem value={100}>100</MenuItem>
-            <MenuItem value={200}>200</MenuItem>
-            <MenuItem value={250}>250</MenuItem>
-            <MenuItem value={500}>500</MenuItem>
-          </Select>
-          <IconButton
-            disabled={state.loading}
-            onClick={handleDisplayModeChange}
-          >
-            {state.displayMode === DisplayMode.TableList ? (
-              <GridViewIcon />
-            ) : (
-              <ListIcon />
-            )}
-          </IconButton>
-        </Box>
-      </Box>
     </Container>
   );
 };
