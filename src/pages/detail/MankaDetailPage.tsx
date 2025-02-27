@@ -30,6 +30,7 @@ import InfinityImgViewer from './InfinityImgViewer';
 import PageImgViewer from './PageImgViewer';
 import { getImgLink, logMankaHistory } from './store';
 import { DetailImgMode, ImgRankField, ImgRankMode, ImgSpec } from './types';
+import httpClient from '@/adapter/http/client';
 
 export default function MankaDetailPage() {
   const { mankaId } = useParams();
@@ -103,10 +104,14 @@ export default function MankaDetailPage() {
     }
     setLoading(true);
     try {
-      const response = await API.get<Response<MankaArchive>>(
+      // const response = await API.get<Response<MankaArchive>>(
+      //   `/manka/${mankaId}/detail`,
+      // );
+      // const archiveData = response.data.data;
+      const { data } = await httpClient.get<MankaArchive>(
         `/manka/${mankaId}/detail`,
       );
-      const archiveData = response.data.data;
+      const archiveData = data;
       setMankaArchive(archiveData);
       setImgItems(archiveData?.archiveItems || []);
       setFavoriteId(archiveData.belongFavoriteId);
@@ -137,11 +142,12 @@ export default function MankaDetailPage() {
     if (!mankaArchive) return;
     try {
       const query = { archiveId: mankaArchive.archiveId };
-      const response = await API.post<Response<Favorite>>(
-        '/favorite/add',
-        query,
-      );
-      setFavoriteId(response.data.data.favoriteId);
+      // const response = await API.post<Response<Favorite>>(
+      //   '/favorite/add',
+      //   query,
+      // );
+      const { data } = await httpClient.post<Favorite>('/favorite/add', query);
+      setFavoriteId(data.favoriteId);
       enqueueSnackbar('已加入收藏', { variant: 'success' });
     } catch (e) {
       console.error('错误:', e);
@@ -153,7 +159,8 @@ export default function MankaDetailPage() {
   const deleteFavorite = useCallback(async () => {
     if (!favoriteId) return;
     try {
-      await API.get<Response<unknown>>(`/favorite/remove/${favoriteId}`);
+      // await API.get<Response<unknown>>(`/favorite/remove/${favoriteId}`);
+      await httpClient.get<unknown>(`/favorite/remove/${favoriteId}`);
       setFavoriteId(undefined);
       enqueueSnackbar('已取消收藏', { variant: 'success' });
     } catch (e) {

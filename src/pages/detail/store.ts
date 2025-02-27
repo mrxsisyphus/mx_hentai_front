@@ -1,3 +1,5 @@
+import httpClient from '@/adapter/http/client';
+import { BASE_URL } from '@/adapter/http/types';
 import API from '../../middleware/api';
 
 export function getImgLink(
@@ -5,9 +7,9 @@ export function getImgLink(
   archiveItemIndex: number,
   imgSpec: string,
 ) {
-  return `${API.defaults.baseURL}/manka/${mankaId}/${archiveItemIndex}/${imgSpec}/link`;
+  return `${BASE_URL}/manka/${mankaId}/${archiveItemIndex}/${imgSpec}/link`;
 }
 
 export async function logMankaHistory(mankaId: string, mankaPage: number) {
-  return await API.get(`/manka/${mankaId}/log/${mankaPage}`);
+  return await httpClient.get(`/manka/${mankaId}/log/${mankaPage}`);
 }

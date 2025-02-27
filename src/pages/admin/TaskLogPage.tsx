@@ -22,6 +22,7 @@ import { PageTask, type PageTaskLog, Task, type TaskLog } from '../../types';
 import type { TableColumn } from '../../types/func';
 import type { Response } from '../../types/response';
 import { formatLocalTime } from '../../utils/datetime';
+import httpClient from '@/adapter/http/client';
 
 export default function TaskLogPage() {
   const [pageData, setPageData] = React.useState<TaskLog[]>([]);
@@ -48,9 +49,13 @@ export default function TaskLogPage() {
       },
     };
     try {
-      const {
-        data: { data },
-      } = await API.post<Response<PageTaskLog>>('/taskLog/page', query);
+      // const {
+      //   data: { data },
+      // } = await API.post<Response<PageTaskLog>>('/taskLog/page', query);
+      const { data } = await httpClient.post<PageTaskLog>(
+        '/taskLog/page',
+        query,
+      );
       const { pageData = [], pageTotal = 0 } = data;
       setPageData(pageData);
       setPageTotal(pageTotal);

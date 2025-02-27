@@ -2,7 +2,7 @@ import axios, { type AxiosResponse } from 'axios';
 import type { Response } from '../types/response';
 import Auth from './auth';
 
-export const baseURL = import.meta.env.PUBLIC_BASE_URL || '/api/v1';
+export const baseURL = process.env.PUBLIC_BASE_URL || '/api/v1';
 
 export const getBaseURL = () => {
   return baseURL;
@@ -39,6 +39,6 @@ API.interceptors.response.use(
   },
   (error) => Promise.reject(error),
 );
-// API.defaults.headers.common['Access-Control-Allow-Origin'] = "*"
+API.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 export default API;

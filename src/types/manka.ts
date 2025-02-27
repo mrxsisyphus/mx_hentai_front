@@ -1,3 +1,5 @@
+import type { Page } from './common';
+
 export interface MankaArchiveTag {
   tagName: string;
   tagValue: string;
@@ -38,12 +40,9 @@ export interface MankaArchive {
   lastReadPage: number;
 }
 
-export interface PageMankaArchive {
-  pageNo: number;
-  pageSize: number;
-  pageTotal: number;
-  pageData: MankaArchive[];
-}
+export type PageMankaArchive = Page<MankaArchive>;
+
+export type PageFavorite = Page<Favorite>;
 
 export interface ArchiveItem {
   archiveItemName: string;

@@ -6,6 +6,7 @@ import loadImg from '../../assets/images/anime_loading.gif';
 import API from '../../middleware/api';
 import type { ArchiveItem } from '../../types';
 import { sizeToString } from '../../utils/datetime';
+import { BASE_URL } from '@/adapter/http/types';
 
 interface ArchiveItemForInfinityProps {
   archiveItem: ArchiveItem;
@@ -22,7 +23,7 @@ const ArchiveItemForInfinity: React.FC<ArchiveItemForInfinityProps> =
 
     const getImgUrl = () => {
       if (!mankaId) return errorImg;
-      return `${API.defaults.baseURL}/manka/${mankaId}/${archiveItem.archiveItemIndex}/${imgSpec}/link`;
+      return `${BASE_URL}/manka/${mankaId}/${archiveItem.archiveItemIndex}/${imgSpec}/link`;
     };
 
     useEffect(() => {

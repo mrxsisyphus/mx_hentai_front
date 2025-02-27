@@ -7,13 +7,18 @@
     "check": "biome check --write",
     "dev": "rsbuild dev --open",
     "format": "biome format --write",
-    "preview": "rsbuild preview"
+    "preview": "rsbuild preview",
+    "dev:tauri": "cross-env IS_TAURI=1 rsbuild dev",
+    "dev:web": "cross-env IS_TAURI=0 rsbuild dev",
+    "build:tauri": "cross-env IS_TAURI=1 rsbuild build",
+    "build:web": "cross-env IS_TAURI=0 rsbuild build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^5.16.13",
     "@mui/material": "^5.14.8",
+    "@tauri-apps/plugin-http": "~2",
     "@types/lodash": "^4.17.13",
     "@types/react-infinite-scroller": "^1.2.5",
     "axios": "^1.5.0",
@@ -32,8 +37,10 @@
     "@biomejs/biome": "^1.9.3",
     "@rsbuild/core": "^1.1.8",
     "@rsbuild/plugin-react": "^1.0.7",
+    "@tauri-apps/cli": "^2.2.7",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "cross-env": "^7.0.3",
     "typescript": "^5.7.2"
   }
 }

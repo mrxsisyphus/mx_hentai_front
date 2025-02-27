@@ -22,6 +22,7 @@ import type { PageTask, Task } from '../../types';
 import type { TableColumn } from '../../types/func';
 import type { Response } from '../../types/response';
 import { formatLocalTime } from '../../utils/datetime';
+import httpClient from '@/adapter/http/client';
 
 export default function TaskPage() {
   const [pageData, setPageData] = React.useState<Task[]>([]);
@@ -48,9 +49,10 @@ export default function TaskPage() {
       },
     };
     try {
-      const {
-        data: { data },
-      } = await API.post<Response<PageTask>>('/task/page', query);
+      // const {
+      //   data: { data },
+      // } = await API.post<Response<PageTask>>('/task/page', query);
+      const { data } = await httpClient.post<PageTask>('/task/page', query);
       const { pageData = [], pageTotal = 0 } = data;
       setPageData(pageData);
       setPageTotal(pageTotal);
@@ -146,7 +148,8 @@ export default function TaskPage() {
           },
         };
       }
-      await API.post<Response<PageTask>>('/task/trigger/scan', body);
+      // await API.post<Response<PageTask>>('/task/trigger/scan', body);
+      await httpClient.post<PageTask>('/task/trigger/scan', body);
     } catch (e) {
       console.error(e);
       enqueueSnackbar(`${e}`, { variant: 'error' });

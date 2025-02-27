@@ -30,6 +30,7 @@ import { useSnackbar } from 'notistack';
 import type React from 'react';
 import { useMemo, useRef, useState } from 'react';
 import API from '../../middleware/api';
+import httpClient from '@/adapter/http/client';
 
 const Config: React.FC = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -128,6 +129,7 @@ const Config: React.FC = () => {
         },
       });
       const { preImportList } = response.data.data;
+      // const { preImportList } = data;
       if (preImportList.length <= 0) {
         enqueueSnackbar('输入内容未找到匹配项,请重试', { variant: 'warning' });
         return;

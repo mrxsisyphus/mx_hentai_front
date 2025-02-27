@@ -13,7 +13,9 @@ import type React from 'react';
 import { useState } from 'react';
 import API from '../../middleware/api';
 import Auth from '../../middleware/auth';
+import { fetch } from '@tauri-apps/plugin-http';
 import type { Response } from '../../types/response';
+import httpClient from '@/adapter/http/client';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -59,7 +61,18 @@ const Login: React.FC = () => {
     setLoading(true);
     // 在这里添加处理登录的逻辑
     try {
-      const data = await API.post<Response<any>>('/user/login', {
+      // const data = await API.post<Response<any>>('/user/login', {
+      //   userName: username,
+      //   password: password,
+      // });
+      // const data = await fetch('http://tcp.stayhugry.top:10011/user/login', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     userName: username,
+      //     password: password,
+      //   }),
+      // });
+      const data = await httpClient.post('/user/login', {
         userName: username,
         password: password,
       });

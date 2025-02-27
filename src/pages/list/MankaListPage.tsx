@@ -35,12 +35,13 @@ import type {
   PageMankaArchive,
   SearchGroup,
 } from '../../types';
-import type { Response } from '../../types/response';
+import type { Response } from '../../types';
 import MankaImgItem from './MankaImgItem';
-import MankaTableListPage from './MankaTableListPage';
 import MankaImgListPage from './MankaImgListPage';
 import MankaInfiniteScrollPage from './MankaInfiniteScrollPage';
+import MankaTableListPage from './MankaTableListPage';
 import { DisplayMode, RankField, RankMode } from './types';
+import httpClient from '@/adapter/http/client';
 
 // 定义状态和动作类型
 interface State {
@@ -213,9 +214,14 @@ const MankaListPage: React.FC = () => {
       };
 
       try {
-        const {
-          data: { data },
-        } = await API.post<Response<PageMankaArchive>>('/manka/search', query);
+        // const {
+        //   data: { data },
+        // } = await API.post<Response<PageMankaArchive>>('/manka/search', query);
+
+        const { data } = await httpClient.post<PageMankaArchive>(
+          '/manka/search',
+          query,
+        );
 
         dispatch({ type: 'SET_PAGE_TOTAL', payload: data.pageTotal });
         // 如果是无限滚动模式且是追加数据，则合并数据
@@ -272,9 +278,10 @@ const MankaListPage: React.FC = () => {
   // 获取搜索组
   const fetchSearchGroups = useCallback(async () => {
     try {
-      const {
-        data: { data },
-      } = await API.get<Response<SearchGroup[]>>('/searchGroup/list');
+      // const {
+      //   data: { data },
+      // } = await API.get<Response<SearchGroup[]>>('/searchGroup/list');
+      const { data } = await httpClient.get<SearchGroup[]>('/searchGroup/list');
       dispatch({ type: 'SET_SEARCH_GROUPS', payload: data });
     } catch (e) {
       console.error('err', e);
@@ -387,9 +394,10 @@ const MankaListPage: React.FC = () => {
     })
       .then(async () => {
         try {
-          await API.get<Response<void>>(
-            `/searchGroup/remove/${sg.searchGroupId}`,
-          );
+          // await API.get<Response<void>>(
+          //   `/searchGroup/remove/${sg.searchGroupId}`,
+          // );
+          await httpClient.get<void>(`/searchGroup/remove/${sg.searchGroupId}`);
           fetchSearchGroups();
         } catch (e) {
           console.error('err', e);
@@ -408,7 +416,8 @@ const MankaListPage: React.FC = () => {
         searchGroupName: query,
         searchQuery: query,
       };
-      await API.post<Response<void>>('/searchGroup/add', data);
+      // await API.post<Response<void>>('/searchGroup/add', data);
+      await httpClient.post<void>('/searchGroup/add', data);
       fetchSearchGroups();
     } catch (e) {
       console.error('err', e);
@@ -456,13 +465,16 @@ const MankaListPage: React.FC = () => {
       })
         .then(async () => {
           try {
-            const data = { archiveId: manka.archiveId };
-            const response = await API.post<Response<{ favoriteId: string }>>(
+            // const response = await API.post<Response<{ favoriteId: string }>>(
+            //   '/favorite/add',
+            //   data,
+            // );
+            const { data } = await httpClient.post<{ favoriteId: string }>(
               '/favorite/add',
-              data,
+              { archiveId: manka.archiveId },
             );
 
-            if (!response.data.data.favoriteId) {
+            if (!data.favoriteId) {
               console.warn('没有从 API 返回 favoriteId');
               return;
             }
@@ -471,7 +483,7 @@ const MankaListPage: React.FC = () => {
               type: 'SET_PAGE_DATA',
               payload: state.pageData.map((item) =>
                 item.archiveId === manka.archiveId
-                  ? { ...item, belongFavoriteId: response.data.data.favoriteId }
+                  ? { ...item, belongFavoriteId: data.favoriteId }
                   : item,
               ),
             });
@@ -497,7 +509,8 @@ const MankaListPage: React.FC = () => {
       })
         .then(async () => {
           try {
-            await API.get<Response<void>>(`/favorite/remove/${favoriteId}`);
+            // await API.get<Response<void>>(`/favorite/remove/${favoriteId}`);
+            await httpClient.get<void>(`/favorite/remove/${favoriteId}`);
             dispatch({
               type: 'SET_PAGE_DATA',
               payload: state.pageData.map((item) =>
