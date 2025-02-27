@@ -4,10 +4,10 @@ pnpm install
 # Build
 pnpm build
 # cp build result to outside
-cp -r build ../
+cp -r dist ../
 cd ..
 
 # compress
 mkdir compress
-tar -czvf compress/dist.tar.gz build/*
-zip -r compress/dist.zip build/*
+tar -czvf compress/dist.tar.gz dist/*
+zip -r compress/dist.zip dist/*
